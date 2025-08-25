@@ -1,0 +1,74 @@
+import random
+
+class VacuumCleanerAgent:
+    def __init__(self, rooms):
+        self.rooms = rooms
+        self.current_room = random.choice(list(rooms.keys()))
+        self.cost = 0
+        print(f"Starting in room: {self.current_room}")
+        print(f"Initial room states: {self.rooms}")
+
+
+    def sweep(self):
+        if self.rooms[self.current_room] == 'dirty':
+            self.rooms[self.current_room] = 'clean'
+            self.cost += 1  # Increment cost for sweeping
+            print(f"Swept room {self.current_room}. It is now clean.")
+            return True
+        else:
+            print(f"Room {self.current_room} is already clean.")
+            return False
+
+    def right(self):
+        room_names = list(self.rooms.keys())
+        current_index = room_names.index(self.current_room)
+        if current_index < len(room_names) - 1:
+            self.current_room = room_names[current_index + 1]
+            print(f"Moved right to room: {self.current_room}")
+        else:
+            print(f"Cannot move right from room {self.current_room}. Staying in the same room.")
+
+
+    def left(self):
+        room_names = list(self.rooms.keys())
+        current_index = room_names.index(self.current_room)
+        if current_index > 0:
+            self.current_room = room_names[current_index - 1]
+            print(f"Moved left to room: {self.current_room}")
+        else:
+            print(f"Cannot move left from room {self.current_room}. Staying in the same room.")
+
+
+    def perceive(self):
+        return self.rooms[self.current_room]
+
+initial_states = {}
+for room in rooms.keys():
+    while True:
+        state = input(f"Enter initial state for room {room} (1 for dirty, 0 for clean): ")
+        if state == '1':
+            initial_states[room] = 'dirty'
+            break
+        elif state == '0':
+            initial_states[room] = 'clean'
+            break
+        else:
+            print("Invalid input. Please enter 1 or 0.")
+
+agent = VacuumCleanerAgent(initial_states)
+while any(status == 'dirty' for status in agent.rooms.values()):
+    print("\nAvailable actions: sweep, right, left")
+    action = input("Enter action: ").lower()
+
+    if action == 'sweep':
+        agent.sweep()
+    elif action == 'right':
+        agent.right()
+    elif action == 'left':
+        agent.left()
+    else:
+        print("Invalid action. Please enter sweep, right, or left.")
+
+print("\nAll rooms are clean. Task complete.")
+print(f"Total cost: {agent.cost}")
+print("Sameksha 1BM23CS292")
