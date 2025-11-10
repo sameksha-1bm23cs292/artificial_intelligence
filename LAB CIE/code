@@ -1,0 +1,68 @@
+leaf_nodes = [10, 9, 14, 18, 5, 4, 50, 3]
+tree = [
+    [
+        [leaf_nodes[0], leaf_nodes[1]],  # Children of the first node at depth 2
+        [leaf_nodes[2], leaf_nodes[3]]   # Children of the second node at depth 2
+    ],
+    [
+        [leaf_nodes[4], leaf_nodes[5]],  # Children of the third node at depth 2
+        [leaf_nodes[6], leaf_nodes[7]]   # Children of the fourth node at depth 2
+    ]
+]
+
+print(tree)
+def alpha_beta_with_path_and_pruning(node, depth, alpha, beta, maximizing_player, current_path=[], pruned_paths=[]):
+    """
+    Implements the alpha-beta pruning algorithm and returns the optimal value, path, and pruned paths.
+
+    Args:
+        node: The current node (or subtree).
+        depth: The current depth of the search.
+        alpha: The current alpha value.
+        beta: The current beta value.
+        maximizing_player: True if it's the maximizing player's turn, False otherwise.
+        current_path: The path from the root to the current node.
+        pruned_paths: A list to store the paths that were pruned.
+
+    Returns:
+        A tuple containing the optimal value of the node, the path leading to it, and the list of pruned paths.
+    """
+    if depth == 0:
+        return node, current_path + [node], pruned_paths
+
+    if maximizing_player:
+        best_value = -float('inf')
+        best_path = []
+        for i, child in enumerate(node):
+            child_path = current_path + [i] # Append index to represent the child node
+            value, path, pruned_paths = alpha_beta_with_path_and_pruning(child, depth - 1, alpha, beta, False, child_path, pruned_paths)
+            if value > best_value:
+                best_value = value
+                best_path = path
+            alpha = max(alpha, best_value)
+            if alpha >= beta:
+                # Beta cut-off
+                pruned_paths.append(current_path + [i]) # Record the path that was pruned
+                break
+        return best_value, best_path, pruned_paths
+    else:
+        best_value = float('inf')
+        best_path = []
+        for i, child in enumerate(node):
+            child_path = current_path + [i] # Append index to represent the child node
+            value, path, pruned_paths = alpha_beta_with_path_and_pruning(child, depth - 1, alpha, beta, True, child_path, pruned_paths)
+            if value < best_value:
+                best_value = value
+                best_path = path
+            beta = min(beta, best_value)
+            if alpha >= beta:
+                # Alpha cut-off
+                pruned_paths.append(current_path + [i]) # Record the path that was pruned
+                break
+        return best_value, best_path, pruned_paths
+
+optimal_value, optimal_path, pruned_paths = alpha_beta_with_path_and_pruning(tree, 3, -float('inf'), float('inf'), True)
+
+print(f"The optimal value of the root node is: {optimal_value}")
+print(f"The path to the optimal value is: {optimal_path}")
+print(f"Pruned paths: {pruned_paths}")
